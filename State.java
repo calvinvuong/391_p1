@@ -44,6 +44,37 @@ public class State {
     public State duplicate() {
 	return new State(board);
     }
+
+
+    // Takes as input int n
+    // Randomizes the board by performing n random legal moves
+    public void randomize(int n) {
+	for ( ; n > 0; n-- ) {
+	    // random integer from 0 to 3 inclusive
+	    int randInt = (int) (Math.random() * 4);
+	    
+	    // choose a random move from legal moves based on randInt
+	    // custom counting method to "skip over" the illegal moves
+	    boolean[] legal = legalMoves();
+	    int counter = -1;
+	    while (randInt >= 0) {
+		counter += 1;
+		if ( legal[counter % 4] )
+		    randInt -= 1;
+	    } // at completion of while loop, counter % 4 corresponds to our random move
+
+	    if ( counter % 4 == 0 )
+		moveUp();
+	    else if ( counter % 4 == 1 )
+		moveDown();
+	    else if ( counter % 4 == 2 )
+		moveLeft();
+	    else if ( counter % 4 == 3 )
+		moveRight();
+	}
+    }
+	    
+	    
     
     // Moves the blank tile up
     public void moveUp() {
@@ -106,6 +137,14 @@ public class State {
 
 	State b1 = new State();
 	b1.print();
+	System.out.println();
+
+	b1.randomize(50);
+	b1.print();
+	System.out.println();
+
+	
+	/*
 	System.out.println(Arrays.toString(b1.legalMoves()));
 	System.out.println();
 
@@ -150,7 +189,7 @@ public class State {
 	b2.print();
 	System.out.println();
 	b1.print();
-	
+	*/
 
 	
     }
