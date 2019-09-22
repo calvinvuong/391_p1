@@ -50,26 +50,32 @@ public class State {
     // Randomizes the board by performing n random legal moves
     public void randomize(int n) {
 	for ( ; n > 0; n-- ) {
-	    // random integer from 0 to 3 inclusive
-	    int randInt = (int) (Math.random() * 4);
+	    // count number of legal moves
+	    boolean[] legal = legalMoves();
+	    int numLegalMoves = 0;
+	    for ( int i = 0; i < 4; i++ ) {
+		if ( legal[i] )
+		    numLegalMoves += 1;
+	    }
+	    // random integer from 0 to numLegalMoves-1 inclusive
+	    int randInt = (int) (Math.random() * numLegalMoves);
 	    
 	    // choose a random move from legal moves based on randInt
 	    // custom counting method to "skip over" the illegal moves
-	    boolean[] legal = legalMoves();
 	    int counter = -1;
 	    while (randInt >= 0) {
 		counter += 1;
-		if ( legal[counter % 4] )
+		if ( legal[counter] )
 		    randInt -= 1;
-	    } // at completion of while loop, counter % 4 corresponds to our random move
+	    } // at completion of while loop, counter corresponds to our random move
 
-	    if ( counter % 4 == 0 )
+	    if ( counter == 0 )
 		moveUp();
-	    else if ( counter % 4 == 1 )
+	    else if ( counter == 1 )
 		moveDown();
-	    else if ( counter % 4 == 2 )
+	    else if ( counter == 2 )
 		moveLeft();
-	    else if ( counter % 4 == 3 )
+	    else if ( counter == 3 )
 		moveRight();
 	}
     }
