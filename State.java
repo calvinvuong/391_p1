@@ -46,6 +46,39 @@ public class State {
     }
 
 
+    // Calculates the h1 hueristic for the board state
+    // Sum of the number of misplaced tiles
+    public int calculateH1() {
+	int error = 0; // number of misplaced tiles
+	
+	for ( int i = 0; i < board.length; i++ ) {
+	    for ( int j = 0; j < board.length; j++ ) {
+		// compare board value at (i,j) to the supposed value at (i,j) of the goal state
+		if ( board[i][j] != GOAL[i][j] )
+		    error += 1;
+	    }
+	}
+	return error;
+    }
+
+    // Calculates the h2 heuristic for the board state
+    // Sum of distances of the tiles from their goal position
+    public int calculateH2() {
+	int error = 0; // sum of misplaced distances
+
+	for ( int i = 0; i < board.length; i++ ) {
+	    for ( int j = 0; j < board.length; j++ ) {
+		// the goal position of the tile that is currently at position (i,j) 
+		int[] goalPosition = { (board[i][j]) / 3, (board[i][j]) % 3 };
+		// calculate distance between (i,j) and goal position of this element
+		error += Math.abs( goalPosition[0] - i ) + Math.abs( goalPosition[1] - j );
+	    }
+	}
+	return error;
+    }
+		
+	
+    
     // Takes as input int n
     // Randomizes the board by performing n random legal moves
     public void randomize(int n) {
@@ -148,7 +181,7 @@ public class State {
 	b1.randomize(50);
 	b1.print();
 	System.out.println();
-
+	System.out.println(b1.calculateH2());
 	
 	/*
 	System.out.println(Arrays.toString(b1.legalMoves()));
