@@ -14,13 +14,11 @@ public class Solve {
     public static void main(String[] args) throws Exception{
 	// instantiate a puzzle board
 	State board = new State();
-	board.print();
-	System.out.println();
 	
 	// create File and Scanner objects
 	File commands = new File(args[0]);
 	Scanner scan = new Scanner(commands);
-
+	
 	// read commands from file line by line
 	while (scan.hasNextLine()) {
 	    String commandLine = scan.nextLine();
@@ -32,23 +30,44 @@ public class Solve {
 		board.print();
 		System.out.println();
 	    }
+
+	    // set stae command
+	    else if ( commandLine.toLowerCase().startsWith("setstate") ) {
+		// get the parameter
+		String inputState = commandLine.substring("setState".length() + 1);
+		// popoulate 2D array
+		byte[][] inputBoard = new byte[3][3];
+		int counter = 0; 
+		for ( int i = 0; i < inputState.length(); i++ ) {
+		    char c = inputState.charAt(i);
+		    if ( c == 'b' ) {
+			inputBoard[counter/3][counter%3] = 0;
+			counter += 1;
+		    }
+		    else if ( c != ' ' ) {
+			inputBoard[counter/3][counter%3] = (byte) (Character.getNumericValue(c));
+			counter += 1;
+		    }
+		}
+		board = new State(inputBoard);
+		board.print();
+	    }
 	    
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
-		String heuristic = "h2"; // hardcoded for now
+		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
 		int numMoves = solveAStar(board, heuristic);
-		System.out.println(numMoves);
+		//System.out.println(numMoves);
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
 		board.evaluate("h2");
 		int numMoves = solveLocalBeamSearch(board, 15); // k hardcoded for now
-		System.out.println(numMoves);
+		//System.out.println(numMoves);
 	    }
 	    
 	}
 
-	board.print();
 	System.out.println();
 	
     }
@@ -143,7 +162,7 @@ public class Solve {
 	    // reset childSet and counter
 	    childSet.clear();
 	    counter = 0;
-	    
+
 	    // generate children state for each state currently in the beam
 	    while ( ! beam.isEmpty() ) {
 		State currentState = beam.poll(); // remove from queue
@@ -182,8 +201,12 @@ public class Solve {
 			// perform evaluation function on child using h2 as heuristic
 			childState.evaluate("h2");
 
+			if ( childState.isGoal() ) {
+			    printMoves(childState, childState.getPath());
+			    return childState.getPathCost();
+			}
 			// add childState to childSet if not already explored
-			if ( !explored.contains(childState) )
+			else if ( !explored.contains(childState) )
 			    childSet.add(childState);
 		    } // close if
 		}  // close generating and adding children for currentState
