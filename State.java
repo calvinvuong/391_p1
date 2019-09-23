@@ -16,7 +16,7 @@ public class State implements Comparable {
     // keeps track of blank position
     private int[] blank;
     // 2D array representation of the goal state
-    private final byte[][] GOAL = { {0, 1, 2},
+    private static final byte[][] GOAL = { {0, 1, 2},
 				   {3, 4, 5},
 				   {6, 7, 8} };
 

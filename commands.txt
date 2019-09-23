@@ -1,0 +1,4 @@
+setState 031845762
+solve A-star h2
+solve A-star h1
+
