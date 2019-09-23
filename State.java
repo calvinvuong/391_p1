@@ -7,6 +7,7 @@ public class State {
     // 1-8 represent the numbers
     // 0 represents the blank
     private byte[][] board;
+    private final int DIMENSION = 3;
 
     // keeps track of blank position
     private int[] blank;
@@ -14,7 +15,11 @@ public class State {
     private final byte[][] GOAL = { {0, 1, 2},
 				   {3, 4, 5},
 				   {6, 7, 8} };
-    private final int DIMENSION = 3;
+
+    // number of moves it took to go from start state to this node
+    // g(n) component of the evaluation function
+    // calculated during A* 
+    private int pathCost;
     
     // Default Constructor
     // Initializes the state to the goal state.
@@ -23,6 +28,7 @@ public class State {
 			      {3, 4, 5},
 			      {6, 7, 8} };
 	blank = new int[] {0, 0};
+	pathCost = 0;
     }
 
     // Overloaded Constructor
@@ -38,11 +44,16 @@ public class State {
 		board[i][j] = copyBoard[i][j];
 	    }
 	}
+	pathCost = 0; 
+	
     }
 
     // Returns a new State object represnting the same board configuration as this State
+    // the path cost g(n) is also duplicated
     public State duplicate() {
-	return new State(board);
+	State newState = new State(board); // copies 2D array
+	newState.setPathCost(this.getPathCost()); // copies over path cost
+	return newState;
     }
 
 
@@ -77,7 +88,28 @@ public class State {
 	return error;
     }
 		
-	
+
+    // Accessor method
+    // Returns path cost from start node to this node g(n)
+    public int getPathCost() {
+	return pathCost;
+    }
+
+    // Mutator method
+    // Sets path cost g(n) to input parameter
+    // Returns the new path cost
+    public int setPathCost(int n) {
+	pathCost = n;
+	return pathCost;
+    }
+
+    // Increments the path cost g(n) by 1
+    // Returns the new path cost
+    public int incrementPathCost() {
+	pathCost += 1;
+	return pathCost;
+    }
+
     
     // Takes as input int n
     // Randomizes the board by performing n random legal moves
