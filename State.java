@@ -1,8 +1,9 @@
 import java.util.Arrays;
+import java.util.PriorityQueue;
 // Represents the state of an 8-puzzle board
 
 
-public class State {
+public class State implements Comparable {
     // 2D array representation of the current state
     // 1-8 represent the numbers
     // 0 represents the blank
@@ -20,6 +21,9 @@ public class State {
     // g(n) component of the evaluation function
     // calculated during A* 
     private int pathCost;
+    // heuristic value h(n)
+    private int estimatedCost;
+    
     
     // Default Constructor
     // Initializes the state to the goal state.
@@ -49,7 +53,8 @@ public class State {
     }
 
     // Returns a new State object represnting the same board configuration as this State
-    // the path cost g(n) is also duplicated
+    // The path cost g(n) is also duplicated
+    // Note: Heuristic values do not need to be copied over to duplicate states. 
     public State duplicate() {
 	State newState = new State(board); // copies 2D array
 	newState.setPathCost(this.getPathCost()); // copies over path cost
@@ -59,14 +64,36 @@ public class State {
     // Returns the value of the A* evaluation function f(n) on this state
     // f(n) = g(n) + h(n)
     // Uses the heuristic specified by input
+    // Note: Calling this method recomputes the heuristic value
     public int evaluate(String heuristic) {
 	if ( heuristic.equals("h1") )
-	    return pathCost + calculateH1();
+	    estimatedCost = calculateH1();
 	else if ( heuristic.equals("h2") )
-	    return pathCost + calculateH2();
+	    estimatedCost = calculateH2();
+
+	return pathCost + estimatedCost;
+    }
+
+
+    // Two states are equal if their board configurations are the ssame
+    // Used in priority queue contains()
+    public boolean equals(Object other) {
+	byte[][] otherBoard = ((State) other).getBoard();
+	for ( int i = 0; i < DIMENSION; i++ ) {
+	    for ( int j = 0; j < DIMENSION; j++ ) {
+		if ( board[i][j] != otherBoard[i][j] )
+		    return false;
+	    }
+	}
+	return true;
     }
     
-
+    // Used to order states in priority queue
+    public int compareTo(Object other) {
+	return (this.pathCost + this.estimatedCost)
+	    - (((State) other).getPathCost() + ((State) other).getEstimatedCost());
+    }
+    
     // Calculates the h1 hueristic for the board state
     // Sum of the number of misplaced tiles
     public int calculateH1() {
@@ -97,7 +124,12 @@ public class State {
 	}
 	return error;
     }
-		
+
+    // Accessor method
+    // Returns the 2D board array
+    public byte[][] getBoard() {
+	return board;
+    }
 
     // Accessor method
     // Returns path cost from start node to this node g(n)
@@ -105,6 +137,12 @@ public class State {
 	return pathCost;
     }
 
+    // Accessor method
+    // Returns estimated cost based on heuristic
+    public int getEstimatedCost() {
+	return estimatedCost;
+    }
+    
     // Mutator method
     // Sets path cost g(n) to input parameter
     // Returns the new path cost
@@ -217,13 +255,43 @@ public class State {
     public static void main(String[] args) {
 
 	State b1 = new State();
+	b1.randomize(100);
+	b1.evaluate("h1");
 	b1.print();
+	System.out.println(b1.calculateH1());
 	System.out.println();
 
-	b1.randomize(50);
-	b1.print();
+	State b2 = new State();
+	b2.randomize(100);
+	b2.evaluate("h1");
+	b2.incrementPathCost();
+	b2.print();
+	System.out.println(b2.calculateH1());
 	System.out.println();
-	System.out.println(b1.calculateH2());
+
+	State b3 = new State();
+	b3.randomize(100);
+	b3.evaluate("h1");
+	b3.print();
+	System.out.println(b3.calculateH1());
+	
+	System.out.println();
+	System.out.println();
+
+	State b4 = new State();
+	    
+	PriorityQueue<State> queue = new PriorityQueue<State>();
+	queue.add(b1);
+	queue.add(b2);
+	queue.add(b3);
+
+	System.out.println(queue.contains(b4));
+	
+	queue.poll().print(); System.out.println();
+	queue.poll().print(); System.out.println();
+	queue.poll().print(); System.out.println();
+	
+	
 	
 	/*
 	System.out.println(Arrays.toString(b1.legalMoves()));
