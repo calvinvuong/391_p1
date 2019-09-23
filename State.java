@@ -27,8 +27,8 @@ public class State implements Comparable {
     // heuristic value h(n)
     private int estimatedCost;
 
-    // a list of the previous states from start to this state
-    List<State> path;
+    // a list of the previous moves start to this state
+    List<String> path;
     
     // Default Constructor
     // Initializes the state to the goal state.
@@ -39,7 +39,7 @@ public class State implements Comparable {
 	blank = new int[] {0, 0};
 	pathCost = 0;
 	estimatedCost = 0;
-	path = new LinkedList<State>();
+	path = new LinkedList<String>();
     }
 
     // Overloaded Constructor
@@ -57,7 +57,7 @@ public class State implements Comparable {
 	}
 	pathCost = 0;
 	estimatedCost = 0;
-	path = new LinkedList<State>();
+	path = new LinkedList<String>();
 	
     }
 
@@ -71,6 +71,19 @@ public class State implements Comparable {
 	return newState;
     }
 
+    // Returns true if the current state matches the goal state
+    // Returns false otherwise
+    public boolean isGoal() {
+	for ( int i = 0; i < DIMENSION; i++ ) {
+	    for ( int j = 0; j < DIMENSION; j++ ) {
+		if ( board[i][j] != GOAL[i][j] )
+		    return false;
+	    }
+	}
+	return true;
+    }
+
+    
     // Returns the value of the A* evaluation function f(n) on this state
     // f(n) = g(n) + h(n)
     // Uses the heuristic specified by input
@@ -148,8 +161,8 @@ public class State implements Comparable {
     }
 
     // Accessor method
-    // Returns the list of states from start to current state
-    public List<State> getPath() {
+    // Returns the list of moves from start to current state
+    public List<String> getPath() {
 	return path;
     }
 
@@ -177,11 +190,16 @@ public class State implements Comparable {
     // Mutator method
     // Sets path to the list input
     // Performs a shallow copy
-    private void setPath(List<State> oldPath) {
-	path = new LinkedList<State>(oldPath);
+    private void setPath(List<String> oldPath) {
+	path = new LinkedList<String>(oldPath);
     }
 
+    // Adds the move specified by input into the path list
+    public void addPathMove(String move) {
+	path.add(move);
+    }
     
+
     // Takes as input int n
     // Randomizes the board by performing n random legal moves
     public void randomize(int n) {
