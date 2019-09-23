@@ -56,6 +56,16 @@ public class State {
 	return newState;
     }
 
+    // Returns the value of the A* evaluation function f(n) on this state
+    // f(n) = g(n) + h(n)
+    // Uses the heuristic specified by input
+    public int evaluate(String heuristic) {
+	if ( heuristic.equals("h1") )
+	    return pathCost + calculateH1();
+	else if ( heuristic.equals("h2") )
+	    return pathCost + calculateH2();
+    }
+    
 
     // Calculates the h1 hueristic for the board state
     // Sum of the number of misplaced tiles
