@@ -1,5 +1,8 @@
 import java.util.Arrays;
 import java.util.PriorityQueue;
+import java.util.List;
+import java.util.LinkedList;
+
 // Represents the state of an 8-puzzle board
 
 
@@ -23,7 +26,9 @@ public class State implements Comparable {
     private int pathCost;
     // heuristic value h(n)
     private int estimatedCost;
-    
+
+    // a list of the previous states from start to this state
+    List<State> path;
     
     // Default Constructor
     // Initializes the state to the goal state.
@@ -33,6 +38,8 @@ public class State implements Comparable {
 			      {6, 7, 8} };
 	blank = new int[] {0, 0};
 	pathCost = 0;
+	estimatedCost = 0;
+	path = new LinkedList<State>();
     }
 
     // Overloaded Constructor
@@ -48,7 +55,9 @@ public class State implements Comparable {
 		board[i][j] = copyBoard[i][j];
 	    }
 	}
-	pathCost = 0; 
+	pathCost = 0;
+	estimatedCost = 0;
+	path = new LinkedList<State>();
 	
     }
 
@@ -58,6 +67,7 @@ public class State implements Comparable {
     public State duplicate() {
 	State newState = new State(board); // copies 2D array
 	newState.setPathCost(this.getPathCost()); // copies over path cost
+	newState.setPath(this.getPath());
 	return newState;
     }
 
@@ -138,6 +148,12 @@ public class State implements Comparable {
     }
 
     // Accessor method
+    // Returns the list of states from start to current state
+    public List<State> getPath() {
+	return path;
+    }
+
+    // Accessor method
     // Returns estimated cost based on heuristic
     public int getEstimatedCost() {
 	return estimatedCost;
@@ -156,6 +172,13 @@ public class State implements Comparable {
     public int incrementPathCost() {
 	pathCost += 1;
 	return pathCost;
+    }
+
+    // Mutator method
+    // Sets path to the list input
+    // Performs a shallow copy
+    private void setPath(List<State> oldPath) {
+	path = new LinkedList<State>(oldPath);
     }
 
     
