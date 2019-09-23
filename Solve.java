@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.util.PriorityQueue;
 import java.util.HashSet;
+import java.util.List;
 
 public class Solve {
 
@@ -28,16 +29,22 @@ public class Solve {
 		// get number of steps to randomize to
 		int steps = Integer.parseInt(commandLine.substring("randomizeState".length() + 1));
 		board.randomize(steps);
+		board.print();
+		System.out.println();
 	    }
+	    
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
 		String heuristic = "h2";
 		board.evaluate(heuristic);
-		solveAStar(board, heuristic);
+		int numMoves = solveAStar(board, heuristic);
+		System.out.println(numMoves);
+	    }
+	    
 	}
 
 	board.print();
 	System.out.println();
-
+	
     }
 
     // Solves the 8-puzzle using the A* algorithm
@@ -53,7 +60,7 @@ public class Solve {
 
 	// start loop
 	while ( ! frontier.isEmpty() ) {
-	    State currentState = frotnier.poll();
+	    State currentState = frontier.poll();
 	    // reached goal
 	    if ( currentState.isGoal() ) {
 		printMoves(currentState, currentState.getPath());
