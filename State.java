@@ -125,7 +125,7 @@ public class State implements Comparable {
 	for ( int i = 0; i < board.length; i++ ) {
 	    for ( int j = 0; j < board.length; j++ ) {
 		// compare board value at (i,j) to the supposed value at (i,j) of the goal state
-		if ( board[i][j] != GOAL[i][j] )
+		if ( board[i][j] != 0 && board[i][j] != GOAL[i][j] )
 		    error += 1;
 	    }
 	}
@@ -139,10 +139,12 @@ public class State implements Comparable {
 
 	for ( int i = 0; i < board.length; i++ ) {
 	    for ( int j = 0; j < board.length; j++ ) {
-		// the goal position of the tile that is currently at position (i,j) 
-		int[] goalPosition = { (board[i][j]) / 3, (board[i][j]) % 3 };
-		// calculate distance between (i,j) and goal position of this element
-		error += Math.abs( goalPosition[0] - i ) + Math.abs( goalPosition[1] - j );
+		if ( board[i][j] != 0 ) { // do not calculate Manhattan distance for zero
+		    // the goal position of the tile that is currently at position (i,j) 
+		    int[] goalPosition = { (board[i][j]) / 3, (board[i][j]) % 3 };
+		    // calculate distance between (i,j) and goal position of this element
+		    error += Math.abs( goalPosition[0] - i ) + Math.abs( goalPosition[1] - j );
+		}
 	    }
 	}
 	return error;
