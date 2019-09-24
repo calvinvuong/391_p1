@@ -66,6 +66,20 @@ public class Solve {
 		int numMoves = solveLocalBeamSearch(board, k); // k hardcoded for now
 		//System.out.println(numMoves);
 	    }
+
+	    else if ( commandLine.toLowerCase().startsWith("printstate") )
+		board.print();
+	    else if ( commandLine.toLowerCase().startsWith("move") ) {
+		String direction = commandLine.substring("move".length() + 1);
+		if ( direction.equals("up") )
+		    board.moveUp();
+		else if ( direction.equals("down") )
+		    board.moveDown();
+		else if ( direction.equals("left") )
+		    board.moveLeft();
+		else if ( direction.equals("right") )
+		    board.moveRight();
+	    }
 	    
 	}
 

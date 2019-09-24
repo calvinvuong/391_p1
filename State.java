@@ -306,6 +306,7 @@ public class State implements Comparable {
 		System.out.print(board[i][j] + "\t");
 	    System.out.println();
 	}
+	System.out.println();
     }
     
     public static void main(String[] args) {
