@@ -100,6 +100,7 @@ public class State implements Comparable {
 
     // Two states are equal if their board configurations are the ssame
     // Used in priority queue contains()
+    @Override
     public boolean equals(Object other) {
 	byte[][] otherBoard = ((State) other).getBoard();
 	for ( int i = 0; i < DIMENSION; i++ ) {
@@ -109,6 +110,18 @@ public class State implements Comparable {
 	    }
 	}
 	return true;
+    }
+
+    // Must override hashcode so that works with HashSet
+    @Override
+    public int hashCode() {
+	int hash = 0;
+	for ( int i = 0; i < DIMENSION; i++ ) {
+	    for ( int j = 0; j < DIMENSION; j++ ) {
+		hash += (i+1) * (j+1) * board[i][j] * Math.pow(1, i+j);
+	    }
+	}
+	return hash;
     }
     
     // Used to order states in priority queue
@@ -296,7 +309,10 @@ public class State implements Comparable {
     }
     
     public static void main(String[] args) {
-
+	State b1 = new State();
+	System.out.println(b1.calculateH1());
+	System.out.println(b1.calculateH2());
+	/*
 	State b1 = new State();
 	b1.randomize(100);
 	b1.evaluate("h1");
@@ -333,7 +349,7 @@ public class State implements Comparable {
 	queue.poll().print(); System.out.println();
 	queue.poll().print(); System.out.println();
 	queue.poll().print(); System.out.println();
-	
+	*/
 	
 	
 	/*

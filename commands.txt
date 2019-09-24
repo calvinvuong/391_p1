@@ -1,4 +1,8 @@
-setState 031845762
+*setState 240158376
+*setState 031845762
+*setState b12345678
+randomizeState 100
 solve A-star h2
 solve A-star h1
 
+solve beam 20

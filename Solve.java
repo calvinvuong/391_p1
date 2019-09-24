@@ -14,7 +14,7 @@ public class Solve {
     public static void main(String[] args) throws Exception{
 	// instantiate a puzzle board
 	State board = new State();
-	
+
 	// create File and Scanner objects
 	File commands = new File(args[0]);
 	Scanner scan = new Scanner(commands);
@@ -61,8 +61,9 @@ public class Solve {
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
+		int k = Integer.parseInt(commandLine.substring("solve beam".length() + 1));
 		board.evaluate("h2");
-		int numMoves = solveLocalBeamSearch(board, 15); // k hardcoded for now
+		int numMoves = solveLocalBeamSearch(board, k); // k hardcoded for now
 		//System.out.println(numMoves);
 	    }
 	    
@@ -86,6 +87,7 @@ public class Solve {
 	// start loop
 	while ( ! frontier.isEmpty() ) {
 	    State currentState = frontier.poll(); // remove from queue
+	    //System.out.println(explored.size());
 	    // reached goal
 	    if ( currentState.isGoal() ) {
 		printMoves(currentState, currentState.getPath());
@@ -97,6 +99,7 @@ public class Solve {
    
 		// generate children state from set of legal moves
 		boolean[] legal = currentState.legalMoves();
+		int tmp = 0;
 		for ( int i = 0; i < legal.length; i++ ) {
 		    if ( legal[i] == true ) {
 			State childState = currentState.duplicate();
@@ -123,11 +126,10 @@ public class Solve {
 			// perform evaluation function on child
 			childState.evaluate(heuristic);
 
-			if ( !explored.contains(childState) )
+			if ( !explored.contains(childState) ){
 			    frontier.add(childState);
-
+			}			
 			// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s)
-			
 		    }
 		}
 	    }   
