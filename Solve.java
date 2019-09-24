@@ -14,7 +14,8 @@ public class Solve {
     public static void main(String[] args) throws Exception{
 	// instantiate a puzzle board
 	State board = new State();
-
+	int maxNodes = -1; // default no max
+	
 	// create File and Scanner objects
 	File commands = new File(args[0]);
 	Scanner scan = new Scanner(commands);
@@ -57,19 +58,23 @@ public class Solve {
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
 		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
-		int numMoves = solveAStar(board, heuristic);
+		int numMoves = solveAStar(board, heuristic, maxNodes);
 		//System.out.println(numMoves);
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
 		int k = Integer.parseInt(commandLine.substring("solve beam".length() + 1));
 		board.evaluate("h2");
-		int numMoves = solveLocalBeamSearch(board, k); // k hardcoded for now
+		int numMoves = solveLocalBeamSearch(board, k, maxNodes); // k hardcoded for now
 		//System.out.println(numMoves);
 	    }
 
+	    else if ( commandLine.toLowerCase().startsWith("maxnodes") )
+		maxNodes = Integer.parseInt(commandLine.substring("maxnodes".length() + 1));
+		
 	    else if ( commandLine.toLowerCase().startsWith("printstate") )
 		board.print();
+	    
 	    else if ( commandLine.toLowerCase().startsWith("move") ) {
 		String direction = commandLine.substring("move".length() + 1);
 		if ( direction.equals("up") )
@@ -93,7 +98,7 @@ public class Solve {
     // Prints out the steps to reach goal
     // Takes as input: the start state, the heuristic to use, etc.
     // TODO: Implement maxnodes
-    public static int solveAStar(State startState, String heuristic) {
+    public static int solveAStar(State startState, String heuristic, int maxNodes) {
 	// initialize data structures
 	PriorityQueue<State> frontier = new PriorityQueue<State>();
 	HashSet<State> explored = new HashSet<State>();
@@ -101,8 +106,12 @@ public class Solve {
 
 	// start loop
 	while ( ! frontier.isEmpty() ) {
+	    // if max nodes limit has been reached, stop search
+	    if ( maxNodes > -1 && frontier.size() + explored.size() > maxNodes ) {
+		System.out.println("Reach maximum number of nodes: " + maxNodes);
+		return -1;
+	    }
 	    State currentState = frontier.poll(); // remove from queue
-	    //System.out.println(explored.size());
 	    // reached goal
 	    if ( currentState.isGoal() ) {
 		printMoves(currentState, currentState.getPath());
@@ -129,7 +138,7 @@ public class Solve {
     // Starts from input startState
     // Uses heuristic h2
     // TODO: Implement maxnodes
-    public static int solveLocalBeamSearch(State startState, int k) {
+    public static int solveLocalBeamSearch(State startState, int k, int maxNodes) {
 	// initialize data structures
 	PriorityQueue<State> beam = new PriorityQueue<State>();
 	HashSet<State> explored = new HashSet<State>();
@@ -147,6 +156,12 @@ public class Solve {
 	    childSet.clear();
 	    counter = 0;
 
+	    // if max nodes limit has been reached, stop search
+	    if ( maxNodes > -1 && beam.size() + explored.size() > maxNodes ) {
+		System.out.println("Reach maximum number of nodes: " + maxNodes);
+		return -1;
+	    }
+	    
 	    // generate children state for each state currently in the beam
 	    while ( ! beam.isEmpty() ) {
 		State currentState = beam.poll(); // remove from queue

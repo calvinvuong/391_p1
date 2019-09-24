@@ -2,10 +2,10 @@
 *setState 031845762
 *setState b12345678
 *setState 316257840
-setState 415602738
-*randomizeState 100
+*setState 415602738
+randomizeState 100
 printState
-solve A-star h2
-solve A-star h1
-
+maxNodes 1000
+solve beam 100
+maxNodes 10000
 solve beam 100
