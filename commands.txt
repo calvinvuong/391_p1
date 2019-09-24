@@ -1,21 +1,11 @@
-setState 012345678
-move down
-printState
-move up
-printState
-move right
-printState
-move down
-printState
-move left
-printState
-move down
-printState
 *setState 240158376
 *setState 031845762
 *setState b12345678
+*setState 316257840
+setState 415602738
 *randomizeState 100
+printState
 solve A-star h2
 solve A-star h1
 
-solve beam 50
+solve beam 100

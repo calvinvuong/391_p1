@@ -27,8 +27,9 @@ public class Solve {
 		// get number of steps to randomize to
 		int steps = Integer.parseInt(commandLine.substring("randomizeState".length() + 1));
 		board.randomize(steps);
-		board.print();
-		System.out.println();
+		/*board.print();
+		  System.out.println();
+		*/
 	    }
 
 	    // set stae command
@@ -110,42 +111,9 @@ public class Solve {
 	    // if currentState has already been explored fully, don't bother looking at children
 	    if ( !explored.contains(currentState) ) {
 		explored.add(currentState);
-   
-		// generate children state from set of legal moves
-		boolean[] legal = currentState.legalMoves();
-		int tmp = 0;
-		for ( int i = 0; i < legal.length; i++ ) {
-		    if ( legal[i] == true ) {
-			State childState = currentState.duplicate();
-			// perform move based on what's legal
-			if ( i == 0 ) {
-			    childState.moveUp();
-			    childState.addPathMove("up");
-			}
-			else if ( i == 1 ) {
-			    childState.moveDown();
-			    childState.addPathMove("down");
-			}
-			else if ( i == 2 ) {
-			    childState.moveLeft();
-			    childState.addPathMove("left");
-			}
-			else if ( i == 3 ) {
-			    childState.moveRight();
-			    childState.addPathMove("right");
-			}
-			
-			// increment path cost
-			childState.incrementPathCost();
-			// perform evaluation function on child
-			childState.evaluate(heuristic);
-
-			if ( !explored.contains(childState) ){
-			    frontier.add(childState);
-			}			
-			// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s)
-		    }
-		}
+		
+		// generate child states and add to the frotnier queue
+		processChildren(currentState, heuristic, frontier, explored);
 	    }   
 	}
 	// frontier is empty at end of while loop
@@ -189,44 +157,10 @@ public class Solve {
 		}
 		
 		explored.add(currentState);
-		// generate all children of currentState and add to beam
-		// get legal moves
-		boolean[] legal = currentState.legalMoves();
-		for ( int i = 0; i < legal.length; i++ ) {
-		    if ( legal[i] == true ) {
-			State childState = currentState.duplicate();
-			// perform move based on what is legal
-			if ( i == 0 ) {
-			    childState.moveUp();
-			    childState.addPathMove("up");
-			}
-			else if ( i == 1 ) {
-			    childState.moveDown();
-			    childState.addPathMove("down");
-			}
-			else if ( i == 2 ) {
-			    childState.moveLeft();
-			    childState.addPathMove("left");
-			}
-			else if ( i == 3 ) {
-			    childState.moveRight();
-			    childState.addPathMove("right");
-		    }
-			// increment path cost
-			childState.incrementPathCost();
-			// perform evaluation function on child using h2 as heuristic
-			childState.evaluate("h2");
-
-			if ( childState.isGoal() ) {
-			    printMoves(childState, childState.getPath());
-			    return childState.getPathCost();
-			}
-			// add childState to childSet if not already explored
-			else if ( !explored.contains(childState) )
-			    childSet.add(childState);
-		    } // close if
-		}  // close generating and adding children for currentState
-	    } // close generating and adding children for all states in beam
+		// add each child state to childSet as a "temporary" holder
+		processChildren(currentState, "h2", childSet, explored);
+	    } 
+		
 
 	    // reset beam
 	    beam.clear();
@@ -245,6 +179,46 @@ public class Solve {
 	// goal not found
 	System.out.println("Goal not found.");
 	return -1;
+    }
+
+    // Takes as input a state, a heuristic, and a queue, and a hashset
+    // Generates all the successor states of the input state and adds
+    // Adds the successor states into the queue if not already in hashset
+    public static void processChildren(State currentState, String heuristic, PriorityQueue<State> queue, HashSet<State> set) {
+	// generate children state from set of legal moves
+	boolean[] legal = currentState.legalMoves();
+	for ( int i = 0; i < legal.length; i++ ) {
+	    if ( legal[i] == true ) {
+		State childState = currentState.duplicate();
+		// perform move based on what's legal
+		if ( i == 0 ) {
+		    childState.moveUp();
+		    childState.addPathMove("up");
+		}
+		else if ( i == 1 ) {
+		    childState.moveDown();
+		    childState.addPathMove("down");
+		}
+		else if ( i == 2 ) {
+		    childState.moveLeft();
+		    childState.addPathMove("left");
+		}
+		else if ( i == 3 ) {
+		    childState.moveRight();
+		    childState.addPathMove("right");
+		}
+			
+		// increment path cost
+		childState.incrementPathCost();
+		// perform evaluation function on child
+		childState.evaluate(heuristic);
+
+		if ( !set.contains(childState) )
+		    queue.add(childState);
+		// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s)
+	    }
+	}
+
     }
 
     // prints the moves needed to go from start state to current state, given the list of states along the optimal path
