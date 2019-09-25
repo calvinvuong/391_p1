@@ -58,14 +58,15 @@ public class Solve {
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
 		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
-		int numMoves = solveAStar(board, heuristic, maxNodes);
+		int[] solution = solveAStar(board, heuristic, maxNodes);
+		System.out.println(solution[1]);
 		//System.out.println(numMoves);
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
 		int k = Integer.parseInt(commandLine.substring("solve beam".length() + 1));
 		board.evaluate("h2");
-		int numMoves = solveLocalBeamSearch(board, k, maxNodes); // k hardcoded for now
+		int[] solution = solveLocalBeamSearch(board, k, maxNodes); 
 		//System.out.println(numMoves);
 	    }
 
@@ -94,51 +95,58 @@ public class Solve {
     }
 
     // Solves the 8-puzzle using the A* algorithm
-    // Returns the number of moves to reach goal, -1 if no solution found
+    // Returns an int[] array
+    // First returned element is the number of moves to reach goal, -1 if no solution found
+    // Second returned element is the number of nodes considered during search
     // Prints out the steps to reach goal
     // Takes as input: the start state, the heuristic to use, etc.
     // TODO: Implement maxnodes
-    public static int solveAStar(State startState, String heuristic, int maxNodes) {
+    public static int[] solveAStar(State startState, String heuristic, int maxNodes) {
 	// initialize data structures
 	PriorityQueue<State> frontier = new PriorityQueue<State>();
 	HashSet<State> explored = new HashSet<State>();
+	int numStatesSeen = 0;
+	
 	frontier.add(startState);
 
 	// start loop
 	while ( ! frontier.isEmpty() ) {
 	    // if max nodes limit has been reached, stop search
-	    if ( maxNodes > -1 && frontier.size() + explored.size() > maxNodes ) {
+	    if ( maxNodes > -1 && numStatesSeen > maxNodes ) {
 		System.out.println("Reach maximum number of nodes: " + maxNodes);
-		return -1;
+		return new int[] {-1, numStatesSeen};
 	    }
 	    State currentState = frontier.poll(); // remove from queue
 	    // reached goal
 	    if ( currentState.isGoal() ) {
+		//System.out.println((numStatesSeen) / (double) explored.size());
 		printMoves(currentState, currentState.getPath());
-		return currentState.getPathCost();
+		return new int[] {currentState.getPathCost(), numStatesSeen};
 	    }
 	    // if currentState has already been explored fully, don't bother looking at children
 	    if ( !explored.contains(currentState) ) {
 		explored.add(currentState);
 		
-		// generate child states and add to the frotnier queue
-		processChildren(currentState, heuristic, frontier, explored);
+		// generate child states and add to the frontier queue
+		numStatesSeen += processChildren(currentState, heuristic, frontier, explored);
 	    }   
 	}
 	// frontier is empty at end of while loop
 	// no solution
 	System.out.println("No solution found.");
-	return -1;
+	return new int[] {-1, numStatesSeen};
     }
 
 
     // Solves the 8-puzzle using a local beam search that keeps track of k states
-    // Returns the number of moves to reach goal, -1 if no solution found
+    // Returns an int[] array of two values
+    // First returned value is the number of moves to reach goal, -1 if no solution found
+    // Second returned value is the number of nodes considered during search
     // Prints out the steps to reach goal
     // Starts from input startState
     // Uses heuristic h2
     // TODO: Implement maxnodes
-    public static int solveLocalBeamSearch(State startState, int k, int maxNodes) {
+    public static int[] solveLocalBeamSearch(State startState, int k, int maxNodes) {
 	// initialize data structures
 	PriorityQueue<State> beam = new PriorityQueue<State>();
 	HashSet<State> explored = new HashSet<State>();
@@ -159,7 +167,7 @@ public class Solve {
 	    // if max nodes limit has been reached, stop search
 	    if ( maxNodes > -1 && beam.size() + explored.size() > maxNodes ) {
 		System.out.println("Reach maximum number of nodes: " + maxNodes);
-		return -1;
+		return new int[] {-1, beam.size() + explored.size()};
 	    }
 	    
 	    // generate children state for each state currently in the beam
@@ -168,7 +176,7 @@ public class Solve {
 		// check if reached goal
 		if ( currentState.isGoal() ) {
 		    printMoves(currentState, currentState.getPath());
-		    return currentState.getPathCost();
+		    return new int[] {currentState.getPathCost(), beam.size() + explored.size()};
 		}
 		
 		explored.add(currentState);
@@ -193,13 +201,15 @@ public class Solve {
 
 	// goal not found
 	System.out.println("Goal not found.");
-	return -1;
+	return new int[] {-1, beam.size() + explored.size()};
     }
 
     // Takes as input a state, a heuristic, and a queue, and a hashset
     // Generates all the successor states of the input state and adds
     // Adds the successor states into the queue if not already in hashset
-    public static void processChildren(State currentState, String heuristic, PriorityQueue<State> queue, HashSet<State> set) {
+    // Returns the number of children spawned that have not been seen before
+    public static int processChildren(State currentState, String heuristic, PriorityQueue<State> queue, HashSet<State> set) {
+	int newChildren = 0;
 	// generate children state from set of legal moves
 	boolean[] legal = currentState.legalMoves();
 	for ( int i = 0; i < legal.length; i++ ) {
@@ -228,12 +238,14 @@ public class Solve {
 		// perform evaluation function on child
 		childState.evaluate(heuristic);
 
-		if ( !set.contains(childState) )
+		if ( !set.contains(childState) ) {
 		    queue.add(childState);
+		    newChildren += 1;
+		}
 		// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s)
 	    }
 	}
-
+	return newChildren;
     }
 
     // prints the moves needed to go from start state to current state, given the list of states along the optimal path

@@ -5,7 +5,5 @@
 *setState 415602738
 randomizeState 100
 printState
-maxNodes 1000
-solve beam 100
-maxNodes 10000
-solve beam 100
+solve A-star h1
+solve A-star h2
