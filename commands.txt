@@ -5,5 +5,7 @@
 *setState 415602738
 randomizeState 100
 printState
+maxNodes 500
 solve A-star h1
 solve A-star h2
+solve beam 50

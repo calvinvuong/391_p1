@@ -59,7 +59,6 @@ public class Solve {
 		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
 		int[] solution = solveAStar(board, heuristic, maxNodes);
-		System.out.println(solution[1]);
 		//System.out.println(numMoves);
 	    }
 
@@ -154,6 +153,7 @@ public class Solve {
 	// implemented as a priority queue, so we can poll() k times to get the k best children
 	PriorityQueue<State> childSet = new PriorityQueue<State>();
 	int counter = 0; // counts from 0 to k
+	int numStatesSeen = 0;
 	
 	beam.add(startState);
 
@@ -165,9 +165,9 @@ public class Solve {
 	    counter = 0;
 
 	    // if max nodes limit has been reached, stop search
-	    if ( maxNodes > -1 && beam.size() + explored.size() > maxNodes ) {
+	    if ( maxNodes > -1 && numStatesSeen > maxNodes ) {
 		System.out.println("Reach maximum number of nodes: " + maxNodes);
-		return new int[] {-1, beam.size() + explored.size()};
+		return new int[] {-1, numStatesSeen};
 	    }
 	    
 	    // generate children state for each state currently in the beam
@@ -176,7 +176,7 @@ public class Solve {
 		// check if reached goal
 		if ( currentState.isGoal() ) {
 		    printMoves(currentState, currentState.getPath());
-		    return new int[] {currentState.getPathCost(), beam.size() + explored.size()};
+		    return new int[] {currentState.getPathCost(), numStatesSeen};
 		}
 		
 		explored.add(currentState);
@@ -195,13 +195,14 @@ public class Solve {
 		if ( !explored.contains(bestChild) ) {
 		    beam.add(bestChild);
 		    counter += 1;
+		    numStatesSeen += 1;
 		}
 	    }
 	}
 
 	// goal not found
 	System.out.println("Goal not found.");
-	return new int[] {-1, beam.size() + explored.size()};
+	return new int[] {-1, numStatesSeen};
     }
 
     // Takes as input a state, a heuristic, and a queue, and a hashset
