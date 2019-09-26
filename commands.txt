@@ -1,11 +1,46 @@
-*setState 240158376
-*setState 031845762
-*setState b12345678
-*setState 316257840
-*setState 415602738
+// Example 1
+setState b12 345 678
+printState
+solve A-star h1
+solve A-star h2
+solve beam 50
+
+// Example 2
+setState 312 b45 678
+printState 
+solve A-star h1
+solve A-star h2
+solve beam 50
+
+// Example 3
+setState 24b 158 376
+printState
+solve A-star h1
+solve A-star h2
+solve beam 50
+
+// Example 4
+setState 867 254 301
+printState
+solve A-star h1
+solve A-star h2
+solve beam 50
+
+// Example 5
+randomizeState 100
+printState
+solve A-star h1
+solve A-star h2
+solve beam 50
+
+// Example 6
 randomizeState 100
 printState
 maxNodes 500
 solve A-star h1
 solve A-star h2
 solve beam 50
+
+
+
+

@@ -52,7 +52,7 @@ public class Solve {
 		    }
 		}
 		board = new State(inputBoard);
-		board.print();
+		//board.print();
 	    }
 	    
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
@@ -124,8 +124,7 @@ public class Solve {
 	    }
 	    // if currentState has already been explored fully, don't bother looking at children
 	    if ( !explored.contains(currentState) ) {
-		explored.add(currentState);
-		
+		explored.add(currentState);		
 		// generate child states and add to the frontier queue
 		numStatesSeen += processChildren(currentState, heuristic, frontier, explored);
 	    }   
@@ -181,9 +180,8 @@ public class Solve {
 		
 		explored.add(currentState);
 		// add each child state to childSet as a "temporary" holder
-		processChildren(currentState, "h2", childSet, explored);
+		numStatesSeen += processChildren(currentState, "h2", childSet, explored);
 	    } 
-		
 
 	    // reset beam
 	    beam.clear();
@@ -195,7 +193,6 @@ public class Solve {
 		if ( !explored.contains(bestChild) ) {
 		    beam.add(bestChild);
 		    counter += 1;
-		    numStatesSeen += 1;
 		}
 	    }
 	}

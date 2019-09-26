@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Random;
 
 // Represents the state of an 8-puzzle board
 
@@ -29,7 +30,10 @@ public class State implements Comparable {
 
     // a list of the previous moves start to this state
     List<String> path;
-    
+
+    // random number generator
+    Random randGenerator = new Random(112209913);
+
     // Default Constructor
     // Initializes the state to the goal state.
     public State() {
@@ -227,7 +231,8 @@ public class State implements Comparable {
 		    numLegalMoves += 1;
 	    }
 	    // random integer from 0 to numLegalMoves-1 inclusive
-	    int randInt = (int) (Math.random() * numLegalMoves);
+	    int randInt = (int) (randGenerator.nextDouble() * numLegalMoves);
+	    //int randInt = (int) (Math.random() * numLegalMoves);
 	    
 	    // choose a random move from legal moves based on randInt
 	    // custom counting method to "skip over" the illegal moves
