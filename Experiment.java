@@ -1,9 +1,18 @@
-// Contains code for gathering statistic on A* and local beam search algorithms
+// Contains code for gathering statistics on A* and local beam search algorithms
 import java.util.ArrayList;
 
 public class Experiment {
 
+    public static void main(String[] args) {
+	if ( args.length > 0 && args[0].equals("2") ) 
+	    experiment2();
+	else
+	    experiment1();
+    }
+
+    
     // experiment 2
+    // Collect data by varying maxNodes limit
     public static void experiment2() {
 	//public static void main(String[] args) {
 	
@@ -21,9 +30,6 @@ public class Experiment {
 		data[i][j] = 0;
 	}
 
-	
-
-	
 	// run trials
 	for ( int limit = 200; limit <= 4000; limit += 200 ) {
 	    // perform 200 experiments for each maxNodes limit
@@ -62,11 +68,12 @@ public class Experiment {
 		System.out.print(data[i][j] + "\t");
 	    System.out.println();
 	}
-	
-
     }
-    public static void main(String[] args) {
-	  //public static void experiment1() {
+
+    // Experiment 1
+    // Collect data on number of nodes searched
+    //public static void main(String[] args) {
+    public static void experiment1() {
 	// set up matrix to contain data
 	Object[][] data = new Object[50][5];
 	// solution[0] = numMoves, solution[1] = nodes considered
