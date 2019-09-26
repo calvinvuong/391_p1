@@ -28,9 +28,6 @@ public class Solve {
 		// get number of steps to randomize to
 		int steps = Integer.parseInt(commandLine.substring("randomizeState".length() + 1));
 		board.randomize(steps);
-		/*board.print();
-		  System.out.println();
-		*/
 	    }
 
 	    // set stae command
@@ -59,14 +56,12 @@ public class Solve {
 		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
 		int[] solution = solveAStar(board, heuristic, maxNodes);
-		//System.out.println(numMoves);
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
 		int k = Integer.parseInt(commandLine.substring("solve beam".length() + 1));
 		board.evaluate("h2");
 		int[] solution = solveLocalBeamSearch(board, k, maxNodes); 
-		//System.out.println(numMoves);
 	    }
 
 	    else if ( commandLine.toLowerCase().startsWith("maxnodes") )
@@ -98,7 +93,7 @@ public class Solve {
     // First returned element is the number of moves to reach goal, -1 if no solution found
     // Second returned element is the number of nodes considered during search
     // Prints out the steps to reach goal
-    // Takes as input: the start state, the heuristic to use, etc.
+    // Takes as input: the start state, the heuristic to use, maximum number of nodes to consider
     // TODO: Implement maxnodes
     public static int[] solveAStar(State startState, String heuristic, int maxNodes) {
 	// initialize data structures
@@ -118,7 +113,6 @@ public class Solve {
 	    State currentState = frontier.poll(); // remove from queue
 	    // reached goal
 	    if ( currentState.isGoal() ) {
-		//System.out.println((numStatesSeen) / (double) explored.size());
 		printMoves(currentState, currentState.getPath());
 		return new int[] {currentState.getPathCost(), numStatesSeen};
 	    }
@@ -240,13 +234,13 @@ public class Solve {
 		    queue.add(childState);
 		    newChildren += 1;
 		}
-		// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s)
+		// Note: We don't have to deal with replacing a state already in frontier if childState has a lower cost, because the least costly path will surface up before the more costly path(s).
 	    }
 	}
 	return newChildren;
     }
 
-    // prints the moves needed to go from start state to current state, given the list of states along the optimal path
+    // Prints the moves needed to go from start state to current state, given the list of states along the optimal path
     public static void printMoves(State state, List<String> path) {
 	System.out.println("Number of moves: " + state.getPathCost());
 	System.out.println(path);

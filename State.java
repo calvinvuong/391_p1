@@ -232,7 +232,7 @@ public class State implements Comparable {
 	    }
 	    // random integer from 0 to numLegalMoves-1 inclusive
 	    int randInt = (int) (randGenerator.nextDouble() * numLegalMoves);
-	    //int randInt = (int) (Math.random() * numLegalMoves);
+	    //int randInt = (int) (Math.random() * numLegalMoves); // use this if you don't want to explicitly seed random number generator
 	    
 	    // choose a random move from legal moves based on randInt
 	    // custom counting method to "skip over" the illegal moves

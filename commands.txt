@@ -41,6 +41,18 @@ solve A-star h1
 solve A-star h2
 solve beam 50
 
+// Others
+setState b12 345 678
+printState
+move down
+printState
+move right
+printState
+move up
+printState
+move left
+printState
+
 
 
 
