@@ -30,7 +30,7 @@ public class Solve {
 		board.randomize(steps);
 	    }
 
-	    // set stae command
+	    // set state command
 	    else if ( commandLine.toLowerCase().startsWith("setstate") ) {
 		// get the parameter
 		String inputState = commandLine.substring("setState".length() + 1);
@@ -49,27 +49,41 @@ public class Solve {
 		    }
 		}
 		board = new State(inputBoard);
-		//board.print();
 	    }
-	    
+
+	    // solve A-star command
 	    else if ( commandLine.toLowerCase().startsWith("solve a-star") ) {
 		String heuristic = commandLine.substring("solve a-star".length() + 1);
 		board.evaluate(heuristic);
-		int[] solution = solveAStar(board, heuristic, maxNodes);
+		try { 
+		    int[] solution = solveAStar(board, heuristic, maxNodes);
+		}
+		catch (OutOfMemoryError e) {
+		    System.out.println("Ran out of memory.");
+		}
 	    }
 
+	    // solve beam command
 	    else if ( commandLine.toLowerCase().startsWith("solve beam") ) {
 		int k = Integer.parseInt(commandLine.substring("solve beam".length() + 1));
 		board.evaluate("h2");
-		int[] solution = solveLocalBeamSearch(board, k, maxNodes); 
+		try {
+		    int[] solution = solveLocalBeamSearch(board, k, maxNodes);
+		}
+		catch (OutOfMemoryError e) {
+		    System.out.println("Ran out of memory.");
+		}
 	    }
 
+	    // maxNodes command
 	    else if ( commandLine.toLowerCase().startsWith("maxnodes") )
 		maxNodes = Integer.parseInt(commandLine.substring("maxnodes".length() + 1));
-		
+
+	    // printState command
 	    else if ( commandLine.toLowerCase().startsWith("printstate") )
 		board.print();
-	    
+
+	    // move <direction> command
 	    else if ( commandLine.toLowerCase().startsWith("move") ) {
 		String direction = commandLine.substring("move".length() + 1);
 		if ( direction.equals("up") )
